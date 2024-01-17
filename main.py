@@ -1,11 +1,24 @@
+import io
+
 import requests
+from PIL import Image
 
-response=requests.get("https://thesportsdb.com/api/v1/json/3/all_leagues.php")
-all_leagues=response.json()
+API_KEY="live_5Jo8nnq6VmN2tGn7Iq3MGHAvoMmQZuBP2WJ1oPVTVhYc2nWW2SQ5lpeBfJtcLlWu"
 
-response=requests.get("https://thesportsdb.com/api/v1/json/3/search_all_teams.php?l=NBA")
-all_teams_NBA=response.json()
+header={
+'x-api-key' : API_KEY
+}
 
+params={
+    'limit':100
+}
 
-for team in all_teams_NBA['teams']:
-    print(team['strTeam'])
+response=requests.get("https://api.thecatapi.com/v1/images/search",headers=header,params=params)
+
+cats=response.json()
+i=1
+for cat in cats:
+    response=requests.get(cat['url'])
+    image=Image.open(io.BytesIO(response.content))
+    image.save(f'cats/{i}.png')
+    i+=1
